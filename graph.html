@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#FF4500", "font": {"color": "white"}, "id": "Toy Story", "label": "Toy Story", "shape": "dot", "size": 35}, {"color": "#FF4500", "font": {"color": "white"}, "id": "The Dark Knight Rises", "label": "The Dark Knight Rises", "shape": "dot", "size": 35}, {"color": "#FF4500", "font": {"color": "white"}, "id": "Avengers: Age of Ultron", "label": "Avengers: Age of Ultron", "shape": "dot", "size": 35}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Viking", "label": "The Viking", "shape": "dot", "size": 90.5}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Action", "label": "Action", "shape": "dot"}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Drama", "label": "Drama", "shape": "dot"}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Adventure", "label": "Adventure", "shape": "dot"}, {"color": "#00FF00", "font": {"color": "white"}, "id": "English", "label": "English", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Confessions of a Dangerous Mind", "label": "Confessions of a Dangerous Mind", "shape": "dot", "size": 84.5}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Comedy", "label": "Comedy", "shape": "dot"}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Crime", "label": "Crime", "shape": "dot"}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Thriller", "label": "Thriller", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Warrior", "label": "The Warrior", "shape": "dot", "size": 82.0}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Animation", "label": "Animation", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Le Samoura\u00ef", "label": "Le Samoura\u00ef", "shape": "dot", "size": 72.0}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Pok\u00e9mon 3: The Movie", "label": "Pok\u00e9mon 3: The Movie", "shape": "dot", "size": 70.5}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Family", "label": "Family", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Clockstoppers", "label": "Clockstoppers", "shape": "dot", "size": 68.5}, {"color": "#FF00FF", "font": {"color": "white"}, "id": "Science Fiction", "label": "Science Fiction", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Days of Darkness", "label": "Days of Darkness", "shape": "dot", "size": 66.5}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Bubble", "label": "Bubble", "shape": "dot", "size": 58.5}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Dark Knight", "label": "The Dark Knight", "shape": "dot", "size": 58.01500000000002}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Christian Bale\u0027", "label": "\u0027Christian Bale\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Michael Caine\u0027", "label": "\u0027Michael Caine\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Gary Oldman\u0027", "label": "\u0027Gary Oldman\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Morgan Freeman\u0027", "label": "\u0027Morgan Freeman\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Nestor Carbonell\u0027", "label": "\u0027Nestor Carbonell\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Cillian Murphy\u0027", "label": "\u0027Cillian Murphy\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Patrick Leahy\u0027", "label": "\u0027Patrick Leahy\u0027", "shape": "dot"}, {"color": "#00FFFF", "font": {"color": "white"}, "id": "Christopher Nolan", "label": "Christopher Nolan", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Inception", "label": "Inception", "shape": "dot", "size": 54.015}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Joseph Gordon-Levitt\u0027", "label": "\u0027Joseph Gordon-Levitt\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Tom Hardy\u0027", "label": "\u0027Tom Hardy\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Marion Cotillard\u0027", "label": "\u0027Marion Cotillard\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Miranda Nolan\u0027", "label": "\u0027Miranda Nolan\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Russ Fega\u0027", "label": "\u0027Russ Fega\u0027", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Blackout", "label": "Blackout", "shape": "dot", "size": 54.0}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Congress", "label": "The Congress", "shape": "dot", "size": 52.5}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Batman Begins", "label": "Batman Begins", "shape": "dot", "size": 52.01500000000001}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Liam Neeson\u0027", "label": "\u0027Liam Neeson\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027John Nolan\u0027", "label": "\u0027John Nolan\u0027", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Avengers", "label": "The Avengers", "shape": "dot", "size": 51.864999999999995}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Robert Downey Jr.\u0027", "label": "\u0027Robert Downey Jr.\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Chris Evans\u0027", "label": "\u0027Chris Evans\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Mark Ruffalo\u0027", "label": "\u0027Mark Ruffalo\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Chris Hemsworth\u0027", "label": "\u0027Chris Hemsworth\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Scarlett Johansson\u0027", "label": "\u0027Scarlett Johansson\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Jeremy Renner\u0027", "label": "\u0027Jeremy Renner\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Cobie Smulders\u0027", "label": "\u0027Cobie Smulders\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Stellan Skarsg\u00e5rd\u0027", "label": "\u0027Stellan Skarsg\u00e5rd\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Samuel L. Jackson\u0027", "label": "\u0027Samuel L. Jackson\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Paul Bettany\u0027", "label": "\u0027Paul Bettany\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Stan Lee\u0027", "label": "\u0027Stan Lee\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Jorge Mardel\u0027", "label": "\u0027Jorge Mardel\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Tiffany Sander McKenzie\u0027", "label": "\u0027Tiffany Sander McKenzie\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Joti Nagra\u0027", "label": "\u0027Joti Nagra\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\"Joseph O\u0027Brien\"", "label": "\"Joseph O\u0027Brien\"", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Chris Vaina\u0027", "label": "\u0027Chris Vaina\u0027", "shape": "dot"}, {"color": "#00FFFF", "font": {"color": "white"}, "id": "Joss Whedon", "label": "Joss Whedon", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Black Gold", "label": "Black Gold", "shape": "dot", "size": 50.5}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Dunkirk", "label": "Dunkirk", "shape": "dot", "size": 46.705}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Interstellar", "label": "Interstellar", "shape": "dot", "size": 42.245}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Anne Hathaway\u0027", "label": "\u0027Anne Hathaway\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027David Gyasi\u0027", "label": "\u0027David Gyasi\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027William Devane\u0027", "label": "\u0027William Devane\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Josh Stewart\u0027", "label": "\u0027Josh Stewart\u0027", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "The Prestige", "label": "The Prestige", "shape": "dot", "size": 39.065}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Andy Serkis\u0027", "label": "\u0027Andy Serkis\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Gary Sievers\u0027", "label": "\u0027Gary Sievers\u0027", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Gangster Squad", "label": "Gangster Squad", "shape": "dot", "size": 38.29500000000001}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Josh Brolin\u0027", "label": "\u0027Josh Brolin\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Josh Pence\u0027", "label": "\u0027Josh Pence\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Anthony Mackie\u0027", "label": "\u0027Anthony Mackie\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Wade Williams\u0027", "label": "\u0027Wade Williams\u0027", "shape": "dot"}, {"color": "#FFA500", "font": {"color": "white"}, "id": "\u0027Michael Papajohn\u0027", "label": "\u0027Michael Papajohn\u0027", "shape": "dot"}, {"color": "#FF69B4", "font": {"color": "white"}, "id": "Following", "label": "Following", "shape": "dot", "size": 37.394999999999996}]);
+                  edges = new vis.DataSet([{"from": "Toy Story", "to": "English"}, {"from": "Toy Story", "to": "Comedy"}, {"from": "Toy Story", "to": "Animation"}, {"from": "Toy Story", "to": "Family"}, {"from": "The Dark Knight Rises", "to": "Action"}, {"from": "The Dark Knight Rises", "to": "Drama"}, {"from": "The Dark Knight Rises", "to": "English"}, {"from": "The Dark Knight Rises", "to": "Crime"}, {"from": "The Dark Knight Rises", "to": "Thriller"}, {"from": "The Dark Knight Rises", "to": "\u0027Christian Bale\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Michael Caine\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Gary Oldman\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Morgan Freeman\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Nestor Carbonell\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Cillian Murphy\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Patrick Leahy\u0027"}, {"from": "The Dark Knight Rises", "to": "Christopher Nolan"}, {"from": "The Dark Knight Rises", "to": "\u0027Joseph Gordon-Levitt\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Tom Hardy\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Marion Cotillard\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Miranda Nolan\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Russ Fega\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Liam Neeson\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027John Nolan\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Jorge Mardel\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Tiffany Sander McKenzie\u0027"}, {"from": "The Dark Knight Rises", "to": "\"Joseph O\u0027Brien\""}, {"from": "The Dark Knight Rises", "to": "\u0027Chris Vaina\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Anne Hathaway\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027David Gyasi\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027William Devane\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Josh Stewart\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Gary Sievers\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Josh Pence\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Wade Williams\u0027"}, {"from": "The Dark Knight Rises", "to": "\u0027Michael Papajohn\u0027"}, {"from": "Avengers: Age of Ultron", "to": "Action"}, {"from": "Avengers: Age of Ultron", "to": "Adventure"}, {"from": "Avengers: Age of Ultron", "to": "English"}, {"from": "Avengers: Age of Ultron", "to": "Science Fiction"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Robert Downey Jr.\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Chris Evans\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Mark Ruffalo\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Chris Hemsworth\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Scarlett Johansson\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Jeremy Renner\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Cobie Smulders\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Stellan Skarsg\u00e5rd\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Samuel L. Jackson\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Paul Bettany\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Stan Lee\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Joti Nagra\u0027"}, {"from": "Avengers: Age of Ultron", "to": "Joss Whedon"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Andy Serkis\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Josh Brolin\u0027"}, {"from": "Avengers: Age of Ultron", "to": "\u0027Anthony Mackie\u0027"}, {"from": "The Viking", "to": "Action"}, {"from": "The Viking", "to": "Drama"}, {"from": "The Viking", "to": "Adventure"}, {"from": "The Viking", "to": "English"}, {"from": "Action", "to": "The Warrior"}, {"from": "Action", "to": "Pok\u00e9mon 3: The Movie"}, {"from": "Action", "to": "Days of Darkness"}, {"from": "Action", "to": "The Dark Knight"}, {"from": "Action", "to": "Inception"}, {"from": "Action", "to": "Batman Begins"}, {"from": "Action", "to": "The Avengers"}, {"from": "Action", "to": "Dunkirk"}, {"from": "Action", "to": "Gangster Squad"}, {"from": "Drama", "to": "Confessions of a Dangerous Mind"}, {"from": "Drama", "to": "The Warrior"}, {"from": "Drama", "to": "Le Samoura\u00ef"}, {"from": "Drama", "to": "Bubble"}, {"from": "Drama", "to": "The Dark Knight"}, {"from": "Drama", "to": "The Congress"}, {"from": "Drama", "to": "Batman Begins"}, {"from": "Drama", "to": "Black Gold"}, {"from": "Drama", "to": "Dunkirk"}, {"from": "Drama", "to": "Interstellar"}, {"from": "Drama", "to": "The Prestige"}, {"from": "Drama", "to": "Gangster Squad"}, {"from": "Drama", "to": "Following"}, {"from": "Adventure", "to": "The Warrior"}, {"from": "Adventure", "to": "Pok\u00e9mon 3: The Movie"}, {"from": "Adventure", "to": "Clockstoppers"}, {"from": "Adventure", "to": "Inception"}, {"from": "Adventure", "to": "The Avengers"}, {"from": "Adventure", "to": "Black Gold"}, {"from": "Adventure", "to": "Interstellar"}, {"from": "English", "to": "Confessions of a Dangerous Mind"}, {"from": "English", "to": "Pok\u00e9mon 3: The Movie"}, {"from": "English", "to": "Clockstoppers"}, {"from": "English", "to": "Days of Darkness"}, {"from": "English", "to": "Bubble"}, {"from": "English", "to": "The Dark Knight"}, {"from": "English", "to": "Inception"}, {"from": "English", "to": "The Congress"}, {"from": "English", "to": "Batman Begins"}, {"from": "English", "to": "The Avengers"}, {"from": "English", "to": "Black Gold"}, {"from": "English", "to": "Dunkirk"}, {"from": "English", "to": "Interstellar"}, {"from": "English", "to": "The Prestige"}, {"from": "English", "to": "Gangster Squad"}, {"from": "English", "to": "Following"}, {"from": "Confessions of a Dangerous Mind", "to": "Comedy"}, {"from": "Confessions of a Dangerous Mind", "to": "Crime"}, {"from": "Confessions of a Dangerous Mind", "to": "Thriller"}, {"from": "Crime", "to": "Le Samoura\u00ef"}, {"from": "Crime", "to": "Bubble"}, {"from": "Crime", "to": "The Dark Knight"}, {"from": "Crime", "to": "Batman Begins"}, {"from": "Crime", "to": "Gangster Squad"}, {"from": "Crime", "to": "Following"}, {"from": "Thriller", "to": "Le Samoura\u00ef"}, {"from": "Thriller", "to": "Clockstoppers"}, {"from": "Thriller", "to": "The Dark Knight"}, {"from": "Thriller", "to": "Inception"}, {"from": "Thriller", "to": "Blackout"}, {"from": "Thriller", "to": "Dunkirk"}, {"from": "Thriller", "to": "The Prestige"}, {"from": "Thriller", "to": "Gangster Squad"}, {"from": "Thriller", "to": "Following"}, {"from": "The Warrior", "to": "Animation"}, {"from": "Animation", "to": "Pok\u00e9mon 3: The Movie"}, {"from": "Animation", "to": "The Congress"}, {"from": "Pok\u00e9mon 3: The Movie", "to": "Family"}, {"from": "Family", "to": "Clockstoppers"}, {"from": "Clockstoppers", "to": "Science Fiction"}, {"from": "Science Fiction", "to": "Days of Darkness"}, {"from": "Science Fiction", "to": "Inception"}, {"from": "Science Fiction", "to": "The Congress"}, {"from": "Science Fiction", "to": "The Avengers"}, {"from": "Science Fiction", "to": "Interstellar"}, {"from": "The Dark Knight", "to": "\u0027Christian Bale\u0027"}, {"from": "The Dark Knight", "to": "\u0027Michael Caine\u0027"}, {"from": "The Dark Knight", "to": "\u0027Gary Oldman\u0027"}, {"from": "The Dark Knight", "to": "\u0027Morgan Freeman\u0027"}, {"from": "The Dark Knight", "to": "\u0027Nestor Carbonell\u0027"}, {"from": "The Dark Knight", "to": "\u0027Cillian Murphy\u0027"}, {"from": "The Dark Knight", "to": "\u0027Patrick Leahy\u0027"}, {"from": "The Dark Knight", "to": "Christopher Nolan"}, {"from": "\u0027Christian Bale\u0027", "to": "Batman Begins"}, {"from": "\u0027Christian Bale\u0027", "to": "The Prestige"}, {"from": "\u0027Michael Caine\u0027", "to": "Inception"}, {"from": "\u0027Michael Caine\u0027", "to": "Batman Begins"}, {"from": "\u0027Michael Caine\u0027", "to": "Dunkirk"}, {"from": "\u0027Michael Caine\u0027", "to": "Interstellar"}, {"from": "\u0027Michael Caine\u0027", "to": "The Prestige"}, {"from": "\u0027Gary Oldman\u0027", "to": "Batman Begins"}, {"from": "\u0027Morgan Freeman\u0027", "to": "Batman Begins"}, {"from": "\u0027Cillian Murphy\u0027", "to": "Inception"}, {"from": "\u0027Cillian Murphy\u0027", "to": "Batman Begins"}, {"from": "\u0027Cillian Murphy\u0027", "to": "Dunkirk"}, {"from": "Christopher Nolan", "to": "Inception"}, {"from": "Christopher Nolan", "to": "Batman Begins"}, {"from": "Christopher Nolan", "to": "Dunkirk"}, {"from": "Christopher Nolan", "to": "Interstellar"}, {"from": "Christopher Nolan", "to": "The Prestige"}, {"from": "Christopher Nolan", "to": "Following"}, {"from": "Inception", "to": "\u0027Joseph Gordon-Levitt\u0027"}, {"from": "Inception", "to": "\u0027Tom Hardy\u0027"}, {"from": "Inception", "to": "\u0027Marion Cotillard\u0027"}, {"from": "Inception", "to": "\u0027Miranda Nolan\u0027"}, {"from": "Inception", "to": "\u0027Russ Fega\u0027"}, {"from": "\u0027Tom Hardy\u0027", "to": "Dunkirk"}, {"from": "\u0027Miranda Nolan\u0027", "to": "Dunkirk"}, {"from": "\u0027Russ Fega\u0027", "to": "Interstellar"}, {"from": "\u0027Russ Fega\u0027", "to": "The Prestige"}, {"from": "Batman Begins", "to": "\u0027Liam Neeson\u0027"}, {"from": "Batman Begins", "to": "\u0027John Nolan\u0027"}, {"from": "\u0027John Nolan\u0027", "to": "Following"}, {"from": "The Avengers", "to": "\u0027Robert Downey Jr.\u0027"}, {"from": "The Avengers", "to": "\u0027Chris Evans\u0027"}, {"from": "The Avengers", "to": "\u0027Mark Ruffalo\u0027"}, {"from": "The Avengers", "to": "\u0027Chris Hemsworth\u0027"}, {"from": "The Avengers", "to": "\u0027Scarlett Johansson\u0027"}, {"from": "The Avengers", "to": "\u0027Jeremy Renner\u0027"}, {"from": "The Avengers", "to": "\u0027Cobie Smulders\u0027"}, {"from": "The Avengers", "to": "\u0027Stellan Skarsg\u00e5rd\u0027"}, {"from": "The Avengers", "to": "\u0027Samuel L. Jackson\u0027"}, {"from": "The Avengers", "to": "\u0027Paul Bettany\u0027"}, {"from": "The Avengers", "to": "\u0027Stan Lee\u0027"}, {"from": "The Avengers", "to": "\u0027Jorge Mardel\u0027"}, {"from": "The Avengers", "to": "\u0027Tiffany Sander McKenzie\u0027"}, {"from": "The Avengers", "to": "\u0027Joti Nagra\u0027"}, {"from": "The Avengers", "to": "\"Joseph O\u0027Brien\""}, {"from": "The Avengers", "to": "\u0027Chris Vaina\u0027"}, {"from": "The Avengers", "to": "Joss Whedon"}, {"from": "\u0027Scarlett Johansson\u0027", "to": "The Prestige"}, {"from": "Interstellar", "to": "\u0027Anne Hathaway\u0027"}, {"from": "Interstellar", "to": "\u0027David Gyasi\u0027"}, {"from": "Interstellar", "to": "\u0027William Devane\u0027"}, {"from": "Interstellar", "to": "\u0027Josh Stewart\u0027"}, {"from": "The Prestige", "to": "\u0027Andy Serkis\u0027"}, {"from": "The Prestige", "to": "\u0027Gary Sievers\u0027"}, {"from": "Gangster Squad", "to": "\u0027Josh Brolin\u0027"}, {"from": "Gangster Squad", "to": "\u0027Josh Pence\u0027"}, {"from": "Gangster Squad", "to": "\u0027Anthony Mackie\u0027"}, {"from": "Gangster Squad", "to": "\u0027Wade Williams\u0027"}, {"from": "Gangster Squad", "to": "\u0027Michael Papajohn\u0027"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"enabled": true, "barnesHut": {"centralGravity": 0.1, "damping": 1, "springLength": 300, "avoidOverlap": 0.2}, "solver": "barnesHut"}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
