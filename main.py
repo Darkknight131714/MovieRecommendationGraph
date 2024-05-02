@@ -80,6 +80,9 @@ def getIncrementOnRating(rating):
         return 0.5
     return 0.25
 
+def getNormalizedSize(size,average):
+    val = size*40
+    return val/average
 
 def generateMovieRecommendationGraph(userWatchedMovies):
     unExploredThings = dict()
@@ -176,6 +179,18 @@ def generateMovieRecommendationGraph(userWatchedMovies):
     # Add movies, directors, and actors as nodes
     nodeCreated = dict()
     count = 20
+    totalSize=0
+    for key,value in sorted_dict.items():
+        movieKey = {"id": key,"type":movie}
+        movieKey = str(movieKey)
+        if movieKey in alreadyMarked:
+            continue
+        totalSize += value
+        count -=1
+        if count == 0:
+            break
+    count = 20
+    average = totalSize/20
     for key, value in sorted_dict.items():
         movieData = movieMap[key]
         movieKey = {"id": key,"type":movie}
@@ -183,7 +198,7 @@ def generateMovieRecommendationGraph(userWatchedMovies):
         if movieKey in alreadyMarked:
             continue
         alreadyMarked[movieKey] = True
-        G.add_node(movieData["original_title"],type=movie,size=value,initial="no")
+        G.add_node(movieData["original_title"],type=movie,size=getNormalizedSize(value,average),initial="no")
         for item in movieData["genres"]:
             genreDict = {"id":item["id"],"type":genre}
             genreDict = str(genreDict)
@@ -246,9 +261,13 @@ def generateMovieRecommendationGraph(userWatchedMovies):
         "enabled": true,
         "barnesHut": {
         "centralGravity": 0.1,
-        "damping": 1,
-        "springLength": 300,
-        "avoidOverlap": 0.2
+        "damping": 0.5,
+        "springLength": 500,
+        "avoidOverlap": 1,
+        "nodeDistance": 300
+        },
+        "stabilization": {
+            "iterations": 2000
         },
         "solver": "barnesHut"
     }
