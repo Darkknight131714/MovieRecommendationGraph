@@ -6,6 +6,7 @@ from streamlit_star_rating import st_star_rating
 import networkx as nx
 from pyvis.network import Network
 import json
+import numpy as np
 TMDB_API = "a1107cc0458955086e008f491fef07a2"
 TMDB_ENDPONT = "https://api.themoviedb.org/3/movie"
 
@@ -31,6 +32,11 @@ def parse_json(json_str):
     except:
         return None
 
+def exponential_weight(percentile, exponent=2):
+    weight = np.exp(-exponent * ((percentile/100) ** 2))
+    weight = weight * 3  # Adjust scaling factor as needed
+    weight = max(0, min(weight, 10))
+    return weight
 
 def fetch_poster(movie_id):
     poster_url = f"{TMDB_ENDPONT}/{movie_id}"
@@ -42,6 +48,11 @@ def fetch_poster(movie_id):
 def loadMovieMap():
     movieMap = pickle.load(open("movieMap.pickle","rb"))
     return movieMap
+
+@st.cache_resource
+def loadSortedVoteCount():
+    voteCount = pickle.load(open("voteCount.pickle","rb"))
+    return voteCount
 
 @st.cache_resource
 def loadMoviesListMap():
@@ -58,11 +69,17 @@ def loadMovieOptions():
     movie_options = [(movieID, movie["original_title"]) for (movieID,movie) in movieMap.items()]
     return movie_options
 
+def getPercentile(value):
+    value_index = np.searchsorted(voteCount, value)
+    percentile = (value_index / (len(voteCount) - 1)) * 100
+    return percentile
+
 
 movieMap = loadMovieMap()
 namesMap = loadNamesMap()
 moviesListMap = loadMoviesListMap()
 movie_options = loadMovieOptions()
+voteCount = loadSortedVoteCount()
 
 
 def format_movie(movie):
@@ -84,7 +101,7 @@ def getNormalizedSize(size,average):
     val = size*40
     return val/average
 
-def generateMovieRecommendationGraph(userWatchedMovies):
+def generateMovieRecommendationGraph(userWatchedMovies,isEnabled):
     unExploredThings = dict()
     moviesSize = dict()
     initialMovies = dict()
@@ -134,6 +151,11 @@ def generateMovieRecommendationGraph(userWatchedMovies):
             if movieID not in moviesSize:
                 moviesSize[movieID] = 0
             moviesSize[movieID] += sizeMap[tagType]*count
+    if isEnabled:
+        for key,count in moviesSize.items():
+            movieVoteCount = movieMap[key]["vote_count"]
+            percentile = getPercentile(movieVoteCount)
+            moviesSize[key] = moviesSize[key]*exponential_weight(percentile)
     sorted_dict = dict(sorted(moviesSize.items(), key=lambda item: item[1], reverse=True))
     G = nx.Graph()
     alreadyMarked = dict()
@@ -298,6 +320,7 @@ def generateMovieRecommendationGraph(userWatchedMovies):
     # net.toggle_physics(True)
     # net.show_buttons(filter_=['physics'])
     net.save_graph('graph.html')
+    return sorted_dict
 
 
 st.title("Movie Recommender System")
@@ -305,6 +328,7 @@ actorWeight = st.slider('Actor Preference', min_value=0.0, max_value=7.0,value =
 directorWeight = st.slider('Director Preference', min_value=0.0, max_value=5.0,value = 1.0)
 genreWeight = st.slider('Genre Preference', min_value=0.0, max_value=5.0,value = 2.0)
 languageWeight = st.slider('Language Preference', min_value=0.0, max_value=5.0,value = 0.5)
+is_enabled = st.checkbox("Enable Niche Content Booster")
 
 selected_movies = st.multiselect("Select Movies:", options= movie_options,format_func = format_movie)
 selected_movie_ratings = {}
@@ -320,12 +344,20 @@ if st.button("Recommend"):
     sizeMap[director] = directorWeight
     sizeMap[genre] = genreWeight
     sizeMap[language] = languageWeight
-    generateMovieRecommendationGraph(selected_movie_ratings)
+    sorted_dict = generateMovieRecommendationGraph(selected_movie_ratings,is_enabled)
     html_data=""
     with open("./graph.html",'r') as f: 
         html_data = f.read()
     st.header("Recommendation Graph")
     st.components.v1.html(html_data,height=800)
+    st.header("Top Recommenedations")
+    count = 20
+    for key,value in sorted_dict.items():
+        movieData= movieMap[key]
+        st.write(20-count + 1,movieData["original_title"],value)
+        count-=1
+        if count == 0:
+            break
     # names, posters = recommend_movie(selected_movie_name)
 
     # col1, col2, col3, col4, col5 = st.columns(5)
